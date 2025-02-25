@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RoundedImage extends StatelessWidget {
+class BannerImage extends StatelessWidget {
   final double? width, height;
   final String imageUrl;
   final bool applyImageRadius;
@@ -13,7 +12,7 @@ class RoundedImage extends StatelessWidget {
   final VoidCallback? onPressed;
   final double borderRadius;
 
-  const RoundedImage({
+  const BannerImage({
     super.key,
     this.border,
     this.padding,
@@ -22,7 +21,7 @@ class RoundedImage extends StatelessWidget {
     required this.imageUrl,
     this.applyImageRadius = true,
     this.backgroundColor = Colors.white38,
-    this.fit = BoxFit.contain,
+    this.fit = BoxFit.cover,
     this.isNetworkImage = false,
     this.onPressed,
     this.borderRadius = 25.0,
