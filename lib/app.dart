@@ -1,25 +1,22 @@
-import 'package:amdby_shop/screens/home_screen/home_screen.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:amdby_shop/app_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:user_repository/user_repository.dart';
+
+import 'blocs/authentication_bloc/authentication_bloc.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final UserRepository userRepository;
 
-  // This widget is the root of your application.
+  const MyApp(this.userRepository, {super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        hintColor: Colors.black12,
-        primaryColor: Colors.black26,
-        textTheme: TextTheme(
-          labelSmall: TextStyle(color: Colors.black45, fontSize: 14.0),
-          labelMedium: TextStyle(color: Colors.black45, fontSize: 17.0),
+    return RepositoryProvider<AuthenticationBloc>(
+        create: (context) => AuthenticationBloc(
+          userRepository: userRepository
         ),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'amd.by'),
+      child: AppView(),
     );
   }
 }
