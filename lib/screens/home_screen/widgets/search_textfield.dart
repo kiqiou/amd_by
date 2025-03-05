@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MyCustomForm extends StatelessWidget {
-  const MyCustomForm({super.key});
+class SearchTextField extends StatelessWidget {
+  const SearchTextField({super.key});
 
   //late TextEditingController _searchingController;
 
@@ -11,7 +11,9 @@ class MyCustomForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 1.0),
       margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 1.0),
       decoration: BoxDecoration(
-        border: Border.all(),
+        border: Border.all(
+          color: Theme.of(context).primaryColor
+        ),
         borderRadius: BorderRadius.all(
           Radius.circular(100.0),
         ),

@@ -1,6 +1,6 @@
 import 'package:amdby_shop/components/circular_container.dart';
 import 'package:amdby_shop/controllers/home_controller.dart';
-import 'package:amdby_shop/image/banner_image.dart';
+import 'package:amdby_shop/components/rounded_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,7 +22,7 @@ class PromoBanner extends StatelessWidget {
         CarouselSlider(
             options: CarouselOptions(
                 viewportFraction: 1, onPageChanged: (index, _) => controller.updatePageIndicator(index)),
-            items: banners.map((url) => Padding(padding: EdgeInsets.symmetric(horizontal: 10.0), child: BannerImage(imageUrl: url))).toList()),
+            items: banners.map((url) => Padding(padding: EdgeInsets.symmetric(horizontal: 10.0), child: RoundedImage(imageUrl: url))).toList()),
         SizedBox(height: 10.0),
         Center(
           child: Obx(

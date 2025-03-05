@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BannerImage extends StatelessWidget {
+class RoundedImage extends StatelessWidget {
   final double? width, height;
   final String imageUrl;
   final bool applyImageRadius;
@@ -12,7 +12,7 @@ class BannerImage extends StatelessWidget {
   final VoidCallback? onPressed;
   final double borderRadius;
 
-  const BannerImage({
+  const RoundedImage({
     super.key,
     this.border,
     this.padding,
