@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:user_repository/src/entities/entities.dart';
 import 'package:user_repository/src/models/user.dart';
@@ -16,7 +17,7 @@ class FirebaseUserRepo implements UserRepository {
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   @override
-  Future<void> singIn(String email, String password) async {
+  Future<void> signIn(String email, String password) async {
     try{
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
@@ -26,20 +27,53 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
-  Future<MyUser> singUp(MyUser myUser, String password) async {
-    try{
+  Future<MyUser> signUp(MyUser myUser, String password) async {
+    try {
       UserCredential user = await _firebaseAuth.createUserWithEmailAndPassword(
-          email: myUser.email,
-          password: password
+        email: myUser.email,
+        password: password,
       );
-
-      myUser.userId = user.user!.uid;
+      final PigeonUserDetails pigeonUserDetails = createPigeonUserDetails(user);
+      myUser.userId = pigeonUserDetails.userInfo.uid!;
       return myUser;
     } catch (e) {
       log(e.toString());
       rethrow;
     }
   }
+
+  PigeonUserDetails createPigeonUserDetails(UserCredential user) {
+    if (user.user == null) {
+      throw Exception("User data is null");
+    }
+
+    final PigeonUserInfo userInfo = PigeonUserInfo(
+      uid: user.user!.uid,
+      email: user.user!.email,
+      displayName: user.user!.displayName,
+      phoneNumber: user.user!.phoneNumber,
+      photoUrl: user.user!.photoURL,
+      isAnonymous: user.user!.isAnonymous,
+      isEmailVerified: user.user!.emailVerified,
+    );
+
+    final List<Map<Object?, Object?>?> providerData = user.user!.providerData.map((provider) {
+      return {
+        'providerId': provider.providerId,
+        'uid': provider.uid,
+        'displayName': provider.displayName,
+        'email': provider.email,
+        'phoneNumber': provider.phoneNumber,
+        'photoUrl': provider.photoURL,
+      };
+    }).toList();
+
+    return PigeonUserDetails(
+      userInfo: userInfo,
+      providerData: providerData,
+    );
+  }
+
 
   @override
   Future<void> logOut() async {
@@ -59,15 +93,22 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
-  Stream<MyUser?> get user {
+  Stream<MyUser> get user {
     return _firebaseAuth.authStateChanges().flatMap((firebaseUser) async* {
-      if (firebaseUser == null) {
+      try {
+        if (firebaseUser == null) {
+          yield MyUser.empty;
+        } else {
+          final document = await usersCollection.doc(firebaseUser.uid).get();
+          if (document.exists && document.data() != null) {
+            yield MyUser.fromEntity(MyUserEntity.fromDocument(document.data()!));
+          } else {
+            yield MyUser.empty;
+          }
+        }
+      } catch (e) {
+        print('Error: $e');
         yield MyUser.empty;
-      } else {
-        yield await usersCollection
-            .doc(firebaseUser.uid)
-            .get()
-            .then((value) => MyUser.fromEntity(MyUserEntity.fromDocument(value.data()!)));
       }
     });
   }

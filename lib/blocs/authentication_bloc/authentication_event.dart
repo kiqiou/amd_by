@@ -7,7 +7,8 @@ sealed class AuthenticationEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class AuthenticationUserChanged extends AuthenticationEvent{
+class AuthenticationUserChanged extends AuthenticationEvent {
   final MyUser? user;
+
   const AuthenticationUserChanged(this.user);
 }

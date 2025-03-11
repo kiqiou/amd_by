@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "111169448810",
+    "firebase_url": "https://amdby-shop-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "amdby-shop",
     "storage_bucket": "amdby-shop.firebasestorage.app"
   },

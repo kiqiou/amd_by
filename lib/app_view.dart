@@ -1,8 +1,12 @@
+import 'package:amdby_shop/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:amdby_shop/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:amdby_shop/screens/auth/views/welcome_screen.dart';
 import 'package:amdby_shop/screens/home_screen/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AppView extends StatelessWidget{
+class AppView extends StatelessWidget {
   const AppView({super.key});
 
   @override
@@ -12,20 +16,25 @@ class AppView extends StatelessWidget{
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.light(
-          background: Colors.grey.shade100,
-          onBackground: Colors.black,
-          primary: Colors.orangeAccent,
-          onPrimary: Colors.white
-        ),
-        hintColor: Colors.black12,
-        primaryColor: Colors.black26,
-        textTheme: TextTheme(
-          labelSmall: TextStyle(color: Colors.black45, fontSize: 14.0),
-          labelMedium: TextStyle(color: Colors.black45, fontSize: 17.0),
-        ),
-        useMaterial3: true,
+            surface: Colors.grey.shade100,
+            onSurface: Colors.black,
+            primary: Color.fromRGBO(255,158,0,1),
+            onPrimary: Colors.white),
       ),
-      home: const MyHomePage(title: 'amd.by'),
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: ((context, state) {
+          if (state.status == AuthenticationStatus.authenticated) {
+            return BlocProvider(
+              create: (context) => SignInBloc(
+                context.read<AuthenticationBloc>().userRepository
+              ),
+              child: const HomeScreen(),
+            );
+          } else {
+            return WelcomeScreen();
+          }
+        }),
+      ),
     );
   }
 }
