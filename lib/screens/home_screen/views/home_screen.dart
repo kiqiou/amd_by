@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:amdby_shop/components/my_text_field.dart';
 import 'package:amdby_shop/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:amdby_shop/screens/home_screen/views/details_screen.dart';
@@ -5,6 +8,7 @@ import 'package:amdby_shop/screens/home_screen/widgets/promo_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,6 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   return null;
                 }),
             SizedBox(height: 10.0),
+            ElevatedButton(
+              onPressed: fetchData,
+              child: Container(
+                height: 30,
+                width: 30,
+                color: Colors.red,
+                child: Text('Ещкере'),
+              ),
+            ),
             Padding(
               padding: EdgeInsets.all(25.0),
               child: PromoBanner(
@@ -221,5 +234,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+}
+
+Future<void> fetchData() async {
+  try {
+    final response = await http.get(Uri.parse('https://reqres.in/api/users'));
+    if (response.statusCode == 200) {
+      log('Ответ сервера: ${response.body}');
+    } else {
+      log('Ошибка: ${response.statusCode}');
+    }
+  } on SocketException catch (e) {
+    log('Ошибка подключения: $e');
+  } on HttpException catch (e) {
+    log('HTTP-ошибка: $e');
   }
 }
