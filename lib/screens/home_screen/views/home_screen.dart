@@ -1,14 +1,9 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:amdby_shop/components/my_text_field.dart';
-import 'package:amdby_shop/screens/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:amdby_shop/screens/home_screen/blocs/product_bloc.dart';
 import 'package:amdby_shop/screens/home_screen/views/details_screen.dart';
 import 'package:amdby_shop/screens/home_screen/widgets/promo_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,51 +15,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final searchController = TextEditingController();
 
+  List<Product> productList = [
+    Product(id: '1', name: 'Робот-пылесос Xiaomi Robot Vacuum S20+ B108GL', price: 1077.05, rate: 4, countOfReview: 5, image: 'assets/images/first_thing.png'),
+    Product(id: '2', name: 'Ноутбук Poraline 40PL52TC-SM', price: 820.50, rate: 4.5, countOfReview: 7, image: 'assets/images/second_thing.png'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        title: Row(
-          children: [
-            RichText(
-              text: TextSpan(
-                text: 'amd',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 25,
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: '.',
-                    style: TextStyle(
-                      color: Color.fromRGBO(127, 124, 122, 1),
-                      fontSize: 25,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'by',
-                    style: TextStyle(
-                      color: Color.fromRGBO(111, 191, 55, 1),
-                      fontSize: 25,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.cart)),
-          IconButton(
-              onPressed: () {
-                context.read<SignInBloc>().add(SignOutRequired());
-              },
-              icon: Icon(CupertinoIcons.arrow_right_to_line)),
-        ],
-      ),
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -84,15 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   return null;
                 }),
             SizedBox(height: 10.0),
-            ElevatedButton(
-              onPressed: fetchData,
-              child: Container(
-                height: 30,
-                width: 30,
-                color: Colors.red,
-                child: Text('Ещкере'),
-              ),
-            ),
             Padding(
               padding: EdgeInsets.all(25.0),
               child: PromoBanner(
@@ -114,8 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisSpacing: 16,
                   childAspectRatio: 9 / 16,
                 ),
-                itemCount: 8,
-                itemBuilder: (context, int i) {
+                itemCount: productList.length,
+                itemBuilder: (context, int index) {
+                  final product = productList[index];
                   return Material(
                     elevation: 3,
                     color: Colors.white,
@@ -128,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute<void>(
-                            builder: (BuildContext context) => const DetailsScreen(),
+                            builder: (BuildContext context) => DetailsScreen(product: product,),
                           ),
                         );
                       },
@@ -138,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Image.asset(
-                              'assets/images/first_thing.png',
+                              product.image,
                               fit: BoxFit.cover,
                               height: 165,
                               width: 180,
@@ -155,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: Colors.amberAccent,
                                   ),
                                   Text(
-                                    '4.5',
+                                    '${product.rate}',
                                     style: TextStyle(
                                       fontSize: 10,
                                     ),
@@ -169,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             vertical: 4,
                                           ),
                                           child: Text(
-                                            '(10)',
+                                            '(${product.countOfReview})',
                                             style: TextStyle(
                                                 color: Colors.grey, fontWeight: FontWeight.w800, fontSize: 10),
                                           ),
@@ -180,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 7.0),
                                     child: Text(
-                                      '1072.00 руб.',
+                                      '${product.price} руб.',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -193,12 +144,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: Text(
-                                'Робот вылесос Xiaomi Robot Vacuum S20+ B108GL',
+                                '${product.name}',
                                 style: TextStyle(
                                   fontSize: 14,
                                 ),
                               ),
                             ),
+                            Spacer(),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 2.0),
                               child: Row(
@@ -237,17 +189,4 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> fetchData() async {
-  try {
-    final response = await http.get(Uri.parse('https://reqres.in/api/users'));
-    if (response.statusCode == 200) {
-      log('Ответ сервера: ${response.body}');
-    } else {
-      log('Ошибка: ${response.statusCode}');
-    }
-  } on SocketException catch (e) {
-    log('Ошибка подключения: $e');
-  } on HttpException catch (e) {
-    log('HTTP-ошибка: $e');
-  }
-}
+

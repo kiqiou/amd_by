@@ -1,7 +1,10 @@
+import 'package:amdby_shop/components/row_with_icon.dart';
+import 'package:amdby_shop/screens/home_screen/blocs/product_bloc.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key});
+  final Product product;
+  DetailsScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class DetailsScreen extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(borderRadius),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/first_thing.png'),
+                  image: AssetImage(product.image),
                 ),
               ),
             ),
@@ -45,7 +48,7 @@ class DetailsScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: Text(
-                            'Робот-пылесос Xiaomi Robot Vacuum S20+ B108GL (международная версия, черный)',
+                            product.name,
                             style: TextStyle(
                               fontSize: 18,
                             ),
@@ -149,68 +152,44 @@ class DetailsScreen extends StatelessWidget {
                       height: spaceBetween,
                     ),
                     SizedBox(
-                      height: 500.0,
+                      height: 400,
                       child: ListView.builder(
-                        itemCount: 5,
+                        itemCount: 10,
                         itemBuilder: (BuildContext context, int index) {
-                          return Row(
-                            children: [
-                              Flexible(
-                                child: Text('Название характеристики'),
-                              ),
-                              VerticalDivider(
-                                color: Colors.black12,
-                                width: 2,
-                                thickness: 1,
-                                indent: 10,
-                                endIndent: 10,
-                              ),
-                              Flexible(
-                                child: Text('Сама характеристика'),
-                              ),
-                              Divider(
-                                color: Colors.black12,
-                              ),
-                            ],
+                          return SizedBox(
+                            height: 80.0,
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text('Название характеристики $index'),
+                                ),
+                                VerticalDivider(
+                                  color: Colors.black12,
+                                  width: 2,
+                                  thickness: 1,
+                                  indent: 10,
+                                  endIndent: 10,
+                                ),
+                                SizedBox(width: 10,),
+                                Flexible(
+                                  child: Text('Сама характеристика $index'),
+                                ),
+                                Divider(
+                                  color: Colors.black12,
+                                  thickness: 1,
+                                  indent: 10,
+                                  endIndent: 10,
+                                ),
+                              ],
+                            ),
                           );
                         },
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
             )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RowWithIcon extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String text;
-  final VoidCallback? onTap;
-
-  const RowWithIcon({super.key, required this.icon, required this.color, required this.text, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 18),
-            SizedBox(width: 5),
-            Expanded(
-              child: Text(
-                text,
-                style: TextStyle(fontSize: 16, color: color),
-              ),
-            ),
           ],
         ),
       ),
